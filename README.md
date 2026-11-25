@@ -41,15 +41,50 @@ I wrote altpair from scratch as a pair of small tools for AltLoad:
 
 rootshell stops when it goes to the background. Turn on Location Diary Mode › Session Only in rootshell so it keeps running while you are in Settings.
 
-If rootshell answers `wasm: command not found`, you piped into the tool (`ifconfig en0 | ./altpair.wasm`). rootshell can't pipe into a `.wasm` program, so save the output to `if.txt` and read it with `<` as shown above. The pairing tool also uses rootshell's newer network features (Bonjour and UDP from any sender, added in rootshell 1.0.16-177), so an older rootshell may start it but never show **Pair with AltLoad**.
+Both tools print a one-line fix when something goes wrong. Add `--verbose` (`-v`) to either one to see what it is doing. `--version` and `--help` work on both.
 
-If the pairing tool stays at `Reading ifconfig from stdin...`, it's an older copy waiting for rootshell to finish sending `if.txt`. Press Ctrl-C and download it again; it now reads `if.txt` in the current folder by itself. `--ip A.B.C.D` with your Wi-Fi address works too.
+## If something doesn't work
 
-If the installer stops with `Protocol not available (os error 92)` after you enter the transfer code, it's an older copy that used socket options Open Minis doesn't support. Run `install.sh` again to get the latest one.
+Try the fixes for your problem in order, and stop at the first one that works.
 
-Both tools print a one-line fix when something goes wrong, for example when LocalDevVPN isn't connected, when rootshell is too old (it needs 1.0.16-177 or later), or when the pairing tool has stopped. Add `--verbose` (`-v`) to either one to see what it is doing. `--version` and `--help` work on both.
+### rootshell says `wasm: command not found`
 
-If the two-factor code doesn't arrive, type `r` at the code question to send it again, `s` to get it by text message, or `d` to send it to your devices.
+1. Run the tool with `<`, not a pipe: `./altpair.wasm < if.txt`. rootshell can't pipe into a `.wasm` program.
+2. Update rootshell from the App Store. That copy can't run `.wasm` programs at all.
+
+### Pair with AltLoad doesn't show up in Settings
+
+1. Check that rootshell is 1.0.16-177 or later. Older copies start the tool but can't send the announcement.
+2. Turn on Location Diary Mode › Session Only in rootshell, so the tool keeps running while you are in Settings.
+3. Pass your Wi-Fi address yourself: `./altpair.wasm --ip A.B.C.D` (Settings › Wi-Fi › ⓘ › IP Address).
+4. Turn Developer Mode off and on again, restart the iPhone, and run the tool again.
+
+### The pairing tool stays at `Reading ifconfig from stdin...`
+
+1. Press Ctrl-C and download `altpair.wasm` again. The new copy reads `if.txt` by itself.
+2. Or pass the address yourself with `--ip A.B.C.D`.
+
+### The installer can't connect to the iPhone
+
+1. Turn LocalDevVPN off and on again, then run `install.sh` again.
+2. Turn off any other VPN, proxy or DNS-filter app.
+3. Connect to Wi-Fi. On mobile data the tunnel often can't connect.
+4. Check that Developer Mode is on.
+5. Pair again: `./altpair.wasm --repair` in rootshell, then `wget -qO- https://altload.org/install.sh | sh -s -- --repair` in Open Minis.
+
+### The installer stops with `Protocol not available (os error 92)`
+
+1. Run `install.sh` again. That was an older copy that used socket options Open Minis doesn't support.
+
+### Sign-in fails
+
+1. If the two-factor code doesn't arrive, type `r` at the code question to send it again, `s` to get it by text message, or `d` to send it to your devices.
+2. If Apple turns the sign-in down, try another anisette server with `--anisette <url>`.
+3. Wait a few minutes and try again. Apple sometimes refuses sign-ins for a while.
+
+### Still stuck
+
+Open an issue on [AltLoad](https://github.com/mirazbakis/AltLoad/issues) with the output of the failing command run with `--verbose`. Leave out your Apple ID, password and codes.
 
 ## How it works
 
@@ -226,16 +261,7 @@ The only builds I publish are on AltLoad's releases. They are built by AltLoad's
 
 ## Status
 
-I haven't run this on an iPhone yet. I have not verified:
-
-- That iOS 27 shows **Pair with AltLoad** for an announcement sent from rootshell.
-- That the pairing completes through rootshell's socket interface.
-- That the installer can reach the iPhone through LocalDevVPN from Open Minis.
-- A full Apple ID sign-in, signing and install from Open Minis.
-- The team list and choice on an Apple ID with several teams, and whether the extra sign-in asks for a second two-factor code.
-- That the LocalDevVPN check (10.7.0.1) passes when it is connected.
-- The retries and messages above on a real flaky connection.
-- That `install.sh` and the release workflow work end to end.
+altpair is new, and people are using it on iOS 27, but it hasn't had wide testing. If something doesn't work, see [If something doesn't work](#if-something-doesnt-work), then open an issue.
 
 ## Credits
 
