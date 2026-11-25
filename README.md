@@ -255,7 +255,7 @@ cargo build --release --target aarch64-unknown-linux-musl
 
 Each folder is its own Cargo workspace. The installer depends on AltLoad's `core`, pinned to an AltLoad commit in `installer/Cargo.toml`. Both pin the same idevice revision as the core.
 
-AltLoad includes this repository as its `altpair` submodule. There, `make altpair` builds the installer against AltLoad's own `core/` instead of the pinned commit.
+AltLoad includes this repository as its `altpair` submodule, pinned to a commit of this repository. To move the installer to a newer core, change the `rev` in `installer/Cargo.toml`, run `cargo update -p altload_ffi`, and then update the submodule in AltLoad.
 
 The only builds I publish are on AltLoad's releases. They are built by AltLoad's `.github/workflows/altpair.yml` from this submodule, which attaches `altpair.wasm`, `altpair-aarch64` and their `.sha256` files to each AltLoad release.
 

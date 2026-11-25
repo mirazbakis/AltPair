@@ -14,8 +14,7 @@ path = "src/main.rs"
 
 [dependencies]
 # AltLoad's Rust core: Apple ID sign-in, tunnel to this iPhone, signing, install.
-# Pinned to an AltLoad commit. Inside AltLoad's checkout (where this repo is the
-# `altpair` submodule), `make altpair` builds against that checkout's core instead.
+# Pinned to an AltLoad commit; change `rev` to move to a newer core.
 altload_ffi = { git = "https://github.com/mirazbakis/AltLoad", rev = "2f5f20a55e7cdb30ec28d9a335369796e77794a1" }
 libc = "0.2"
 plist = "1.8"
