@@ -62,7 +62,7 @@ There are four stages.
 - listen on a TCP port (49207 by default), and
 - send an mDNS announcement for a `_remotepairing-pairable-host._tcp` host named "AltLoad".
 
-On iOS 27 this makes **Pair with AltLoad** appear in Settings › Privacy & Security › Developer Mode. When you tap it, the iPhone connects to the tool and asks for a PIN. The tool shows the PIN in large digits. The pairing protocol is the pairing host from the [idevice](https://github.com/jkcoxson/idevice) crate. It is the same one AltLoad's app uses (`core/src/lib.rs`).
+On iOS 27 this makes **Pair with AltLoad** appear in Settings › Privacy & Security › Developer Mode. When you tap it, the iPhone connects to the tool and asks for a PIN. The tool shows the PIN in large digits. The pairing protocol is the pairing host from the [idevice](https://github.com/jkcoxson/idevice) crate. It is the same one AltLoad's app uses (`core/src/lib.rs` in [AltLoad](https://github.com/mirazbakis/AltLoad)).
 
 The result is `rp_pairing_file.plist`, saved in the folder where you ran the tool.
 
@@ -90,7 +90,7 @@ The team step signs in once to list your teams, so the first run may ask for a t
 
 Network steps time out and retry on their own: the anisette check (once more after a pause), the IPA download (3 tries, continuing from what already arrived) and the tunnel (3 rounds, in the core).
 
-All of that is AltLoad's own Rust core (`core/`). It is the same pipeline the app uses to install AltStore, driven from a terminal.
+All of that is AltLoad's own Rust core ([`core/`](https://github.com/mirazbakis/AltLoad/tree/main/core)). It is the same pipeline the app uses to install AltStore, driven from a terminal.
 
 ### 4. Trust and open
 
@@ -203,7 +203,7 @@ The tool writes `rp_pairing_file.plist` in its working directory. If that file a
 The pairing tool:
 
 ```sh
-cd altpair/pair
+cd pair
 rustup target add wasm32-wasip1
 cargo build --release --target wasm32-wasip1
 # output: target/wasm32-wasip1/release/altpair.wasm
@@ -212,15 +212,17 @@ cargo build --release --target wasm32-wasip1
 The installer:
 
 ```sh
-cd altpair/installer
+cd installer
 rustup target add aarch64-unknown-linux-musl
 cargo build --release --target aarch64-unknown-linux-musl
 # output: target/aarch64-unknown-linux-musl/release/altpair
 ```
 
-Each folder is its own Cargo workspace. The installer depends on `../../core`. Both pin the same idevice revision as the core.
+Each folder is its own Cargo workspace. The installer depends on AltLoad's `core`, pinned to an AltLoad commit in `installer/Cargo.toml`. Both pin the same idevice revision as the core.
 
-The only builds I publish are on AltLoad's releases. They are built by `.github/workflows/altpair.yml`, which attaches `altpair.wasm`, `altpair-aarch64` and their `.sha256` files to each AltLoad release.
+AltLoad includes this repository as its `altpair` submodule. There, `make altpair` builds the installer against AltLoad's own `core/` instead of the pinned commit.
+
+The only builds I publish are on AltLoad's releases. They are built by AltLoad's `.github/workflows/altpair.yml` from this submodule, which attaches `altpair.wasm`, `altpair-aarch64` and their `.sha256` files to each AltLoad release.
 
 ## Status
 
@@ -244,3 +246,7 @@ I haven't run this on an iPhone yet. I have not verified:
 - [LocalDevVPN](https://github.com/jkcoxson/LocalDevVPN), for the route back to the iPhone.
 
 altpair contains no code from rootshell or Open Minis. I wrote it myself.
+
+## License
+
+The [AltLoad License](LICENSE.md), the same as AltLoad's.
